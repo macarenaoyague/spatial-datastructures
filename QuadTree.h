@@ -23,6 +23,10 @@ private:
      */
     std::shared_ptr<Node>& search(Point target, std::shared_ptr<Node>& node);
 
+    bool match(Rectangle region, std::shared_ptr<Node>& node);
+
+    void range(Rectangle region, std::shared_ptr<Node>& node, std::vector<Point>& points);
+
 public:
     QuadTree();
     void insert(Point new_point) override;
