@@ -52,45 +52,29 @@ std::shared_ptr<Node> QuadTree<Node, Rectangle, Point>::search(Point target){
 }
 
 template<typename Node, typename Rectangle, typename Point>
-bool QuadTree<Node, Rectangle, Point>::match(Rectangle region, std::shared_ptr<Node>& node) {
-
-    // esto es si hay match
-    // hacer dibujo si es que no
-    const int x = 0, y = 1;
-    auto cur_point = node->get_point();
-    auto region_min = region._min;
-    auto region_max = region._max;
-
-    bool min_limit = region_min.get(x) <= cur_point.get(x) && region_min.get(y) <= cur_point.get(y);
-    bool max_limit = region_max.get(x) >= cur_point.get(x) && region_max.get(y) >= cur_point.get(y);
-
-    if(min_limit && max_limit) return true;
-    return false;
-}
-
-template<typename Node, typename Rectangle, typename Point>
 void QuadTree<Node, Rectangle, Point>::range(Rectangle region, std::shared_ptr<Node>& node, std::vector<Point>& points){
     if(node != nullptr) {
 
-        if (match(region, node)) 
-            points.push_back(node->get_point());
+        const int x = 0, y = 1;
 
-        range(region, node->NW(), points);
-        range(region, node->SW(), points);
-        range(region, node->NE(), points);
-        range(region, node->SE(), points);
+        auto cur_point = node->get_point();
+        auto region_min = region._min;
+        auto region_max = region._max;
+            
+        bool N = region_max.get(y) >= cur_point.get(y);
+        bool S = region_min.get(y) <= cur_point.get(y);
+        bool E = region_max.get(x) >= cur_point.get(x);
+        bool W = region_min.get(x) <= cur_point.get(x);
 
+        if (N && S && E && W) points.push_back(node->get_point());
+        
+        if (N && W) range(region, node->NW(), points);
+        if (S && W) range(region, node->SW(), points);
+        if (N && E) range(region, node->NE(), points);
+        if (S && E) range(region, node->SE(), points);
+        
     }
-
-    // el punto divide la región en 4    
-
-    // lo que está a su derecha arriba
-    // lo que está a su derecha abajo
-    // lo que está a su izquierda arriba
-    // lo que está a su izquierda abajo
 }
-
-
 
 template<typename Node, typename Rectangle, typename Point>
 std::vector<Point> QuadTree<Node, Rectangle, Point>::range(Rectangle region){
